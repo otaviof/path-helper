@@ -13,8 +13,10 @@ builds:
       - linux
     env:
       - CGO_ENABLED=0
+      - GO111MODULE=on
     flags:
-      -a
+      - -a
+      - -mod=vendor
     goarch:
       - amd64
   - id: darwin
@@ -24,7 +26,9 @@ builds:
       - darwin
     env:
       - CGO_ENABLED=0
+      - GO111MODULE=on
     flags:
-      -a
+      - -a
+      - -mod=vendor
     goarch:
       - amd64

@@ -5,8 +5,8 @@
     <a alt="Code Coverage" href="https://codecov.io/gh/otaviof/path-helper">
         <img alt="Code Coverage" src="https://codecov.io/gh/otaviof/path-helper/branch/master/graph/badge.svg">
     </a>
-    <a href="https://godoc.org/github.com/otaviof/path-helper">
-        <img alt="GoDoc Reference" src="https://godoc.org/github.com/otaviof/path-helper?status.svg">
+    <a href="https://godoc.org/github.com/otaviof/path-helper/pkg/path-helper">
+        <img alt="GoDoc Reference" src="https://godoc.org/github.com/otaviof/path-helper/pkg/path-helper?status.svg">
     </a>
     <a alt="CI Status" href="https://travis-ci.com/otaviof/path-helper">
         <img alt="CI Status" src="https://travis-ci.com/otaviof/path-helper.svg?branch=master">
@@ -19,9 +19,13 @@ Command-line application to generate `$PATH` based in a `paths.d` (`/etc/paths.d
 
 ## Install
 
+To install `path-helper` you can simply `go get`, for instance:
+
 ```bash
 go get -u github.com/otaviof/path-helper/cmd/path-helper
 ```
+
+Alternatively, you can:
 
 ```bash
 make instal

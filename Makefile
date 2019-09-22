@@ -7,7 +7,7 @@ BUILD_DIR ?= build
 # end-to-end directory
 E2E_DIR ?= test/e2e
 # build flags
-BUILD_FLAGS ?= -v -a -ldflags=-s
+BUILD_FLAGS ?= -v -a -ldflags=-s -mod=vendor
 # gopath copy from environment
 GOPATH ?= ${GOPATH}
 
@@ -19,10 +19,10 @@ bootstrap:
 	GO111MODULE=on go mod vendor
 
 build: clean
-	CGO_ENABLED=0 go build $(BUILD_FLAGS) -o $(BUILD_DIR)/$(APP) cmd/$(APP)/*
+	GO111MODULE=on CGO_ENABLED=0 go build $(BUILD_FLAGS) -o $(BUILD_DIR)/$(APP) cmd/$(APP)/*
 
 install: build
-	CGO_ENABLED=0 go install $(BUILD_FLAGS) cmd/$(APP)/*
+	GO111MODULE=on CGO_ENABLED=0 go install $(BUILD_FLAGS) cmd/$(APP)/*
 
 clean:
 	rm -rf $(BUILD_DIR) > /dev/null
