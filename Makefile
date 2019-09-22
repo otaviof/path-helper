@@ -24,6 +24,9 @@ clean-vendor:
 test:
 	go test -failfast -race -coverprofile=coverage.txt -covermode=atomic -cover -v .
 
+install: build
+	go install .
+
 codecov:
 	mkdir .ci || true
 	curl -s -o .ci/codecov.sh https://codecov.io/bash
