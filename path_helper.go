@@ -22,7 +22,7 @@ func (p *PathHelper) logger(format string, v ...interface{}) {
 	}
 }
 
-// append a direcotry in global list, making sure it skips duplicates when setting is enabled.
+// append a directory in global list, making sure it skips duplicates when setting is enabled.
 func (p *PathHelper) append(directory string) {
 	if p.config.SkipDuplicates {
 		for _, d := range p.directories {
