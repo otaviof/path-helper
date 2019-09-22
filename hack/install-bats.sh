@@ -11,6 +11,6 @@ cd ${BASE_DIR}
 git clone https://github.com/bats-core/bats-core.git
 
 cd bats-core
-./install.sh /usr/local
+sudo ./install.sh /usr/local
 cd -
 rm -rf ${BASE_DIR}/bats
