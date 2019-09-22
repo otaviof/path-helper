@@ -13,7 +13,10 @@ bootstrap:
 	GO111MODULE=on go mod vendor
 
 build: clean
-	go build -v -o $(BUILD_DIR)/$(APP) .
+	go build -v -o $(BUILD_DIR)/$(APP) cmd/$(APP)/*
+
+install: build
+	go install cmd/$(APP)/*
 
 clean:
 	rm -rf $(BUILD_DIR) > /dev/null
@@ -21,11 +24,10 @@ clean:
 clean-vendor:
 	rm -rf ./vendor > /dev/null
 
-test:
-	go test -failfast -race -coverprofile=coverage.txt -covermode=atomic -cover -v .
+test: test-unit
 
-install: build
-	go install .
+test-unit:
+	go test -failfast -race -coverprofile=coverage.txt -covermode=atomic -cover -v pkg/$(APP)/*
 
 codecov:
 	mkdir .ci || true
