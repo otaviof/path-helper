@@ -62,6 +62,9 @@ func (p *PathHelper) gatherPathDirs() error {
 
 		for _, directory := range directories {
 			p.logger("\t- '%s'", directory)
+			if strings.HasPrefix(directory, "#") {
+				continue
+			}
 			if p.config.SkipNotFound && !dirExists(directory) {
 				p.logger("[WARN] Directory '%s' (%s) is not found! Skipping.", directory, file)
 				continue
