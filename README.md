@@ -20,7 +20,7 @@ Command-line application to generate `$PATH` based in a `paths.d` (`/etc/paths.d
 ## Install
 
 ```bash
-go get -u github.com/otaviof/path-helper
+go get -u github.com/otaviof/path-helper/cmd/path-helper
 ```
 
 ```bash
@@ -43,4 +43,10 @@ Skipping non-existing directory:
 
 ```bash
 path-helper -d
+```
+
+### Shell Configuration Example
+
+```bash
+[ -x $GOPATH/bin/path-helper ] && eval `path-helper`
 ```
