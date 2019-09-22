@@ -1,4 +1,4 @@
-package main
+package pathhelper
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 )
 
 func TestPathHelper(t *testing.T) {
-	config := &Config{Verbose: true, BaseDir: "./test/paths.d"}
+	config := &Config{Verbose: true, BaseDir: "../../test/paths.d"}
 	expectedJoinedPaths := "/a/a/a:/b/b/b:/c/c/c:/d/d/d"
 
 	t.Run("without-duplicates", func(t *testing.T) {

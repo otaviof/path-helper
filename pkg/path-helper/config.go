@@ -1,4 +1,4 @@
-package main
+package pathhelper
 
 // Config all configuration entries supported by this application.
 type Config struct {

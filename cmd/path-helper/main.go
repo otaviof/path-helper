@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	pathhelper "github.com/otaviof/path-helper/pkg/path-helper"
 )
 
 // fatal print out error as a shell comment and exit on error.
@@ -13,7 +15,7 @@ func fatal(err error) {
 }
 
 // commandLineParser handle command line flags, display help message.
-func commandLineParser(config *Config) {
+func commandLineParser(config *pathhelper.Config) {
 	flag.Usage = func() {
 		fmt.Printf(`## path-helper
 
@@ -48,10 +50,10 @@ Command-Line Options:
 }
 
 func main() {
-	config := &Config{}
+	config := &pathhelper.Config{}
 	commandLineParser(config)
 
-	p := NewPathHelper(config)
+	p := pathhelper.NewPathHelper(config)
 	expr, err := p.RenderExpression()
 	if err != nil {
 		fatal(err)
