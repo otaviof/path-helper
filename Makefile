@@ -4,6 +4,10 @@ APP = path-helper
 VERSION ?= $(shell cat ./version)
 # build directory
 BUILD_DIR ?= build
+# build flags
+BUILD_FLAGS ?= -v -a -ldflags=-s
+# gopath copy from environment
+GOPATH ?= ${GOPATH}
 
 .PHONY: default bootstrap build clean test
 
@@ -13,10 +17,10 @@ bootstrap:
 	GO111MODULE=on go mod vendor
 
 build: clean
-	go build -v -o $(BUILD_DIR)/$(APP) cmd/$(APP)/*
+	CGO_ENABLED=0 go build $(BUILD_FLAGS) -o $(BUILD_DIR)/$(APP) cmd/$(APP)/*
 
 install: build
-	go install cmd/$(APP)/*
+	CGO_ENABLED=0 go install $(BUILD_FLAGS) cmd/$(APP)/*
 
 clean:
 	rm -rf $(BUILD_DIR) > /dev/null
@@ -36,6 +40,12 @@ codecov:
 
 snapshot:
 	goreleaser --rm-dist --snapshot
+
+snapshot-local:
+	goreleaser --rm-dist --snapshot --skip-publish --debug
+
+snapshot-install: snapshot-local
+	install -m 755 build/dist/darwin_darwin_amd64/$(APP) "$(GOPATH)/bin/$(APP)"
 
 release:
 	git tag $(VERSION)
