@@ -3,9 +3,12 @@ language: go
 go:
   - 1.13.x
 install: true
-script:
+before_script:
   - make bootstrap
-  - make
-  - make test
+  - make hack-install-bats
+script:
+  - make build
+  - make test-unit
+  - make test-e2e
 after_success:
   - make codecov
