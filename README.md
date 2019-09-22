@@ -27,7 +27,7 @@ go get -u github.com/otaviof/path-helper
 make instal
 ```
 
-# Usage Examples
+## Usage Examples
 
 ```bash
 path-helper --help
