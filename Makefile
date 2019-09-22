@@ -4,6 +4,8 @@ APP = path-helper
 VERSION ?= $(shell cat ./version)
 # build directory
 BUILD_DIR ?= build
+# end-to-end directory
+E2E_DIR ?= test/e2e
 # build flags
 BUILD_FLAGS ?= -v -a -ldflags=-s
 # gopath copy from environment
@@ -28,10 +30,16 @@ clean:
 clean-vendor:
 	rm -rf ./vendor > /dev/null
 
-test: test-unit
+test: test-unit test-e2e
 
 test-unit:
 	go test -failfast -race -coverprofile=coverage.txt -covermode=atomic -cover -v pkg/$(APP)/*
+
+test-e2e:
+	bats --recursive $(E2E_DIR)
+
+hack-install-bats:
+	hack/install-bats.sh
 
 codecov:
 	mkdir .ci || true
