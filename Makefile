@@ -57,5 +57,5 @@ snapshot-install: snapshot-local
 
 release:
 	git tag $(VERSION)
-	git push origin $(VERSION)
+	git push --tags origin $(VERSION)
 	goreleaser --rm-dist
