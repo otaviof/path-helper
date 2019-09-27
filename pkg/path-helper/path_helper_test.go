@@ -13,7 +13,8 @@ func TestPathHelper(t *testing.T) {
 		SkipDuplicates: true,
 		SkipNotFound:   true,
 		Verbose:        true,
-		BaseDir:        "../../test/paths.d",
+		ManBaseDir:     "../../test/paths.d",
+		PathBaseDir:    "../../test/paths.d",
 	}
 	expectedJoinedPaths := "/a/a/a:/b/b/b:/c/c/c:/d/d/d"
 	expectedJoinedPathsDuplicated := "/a/a/a:/b/b/b:/c/c/c:/d/d/d:/d/d/d"
@@ -72,19 +73,19 @@ func TestPathHelper(t *testing.T) {
 // share the test context and expected characteristics.
 func assertFilesAndDirectories(t *testing.T, c *Config, expectedLen int, expectedPaths string) {
 	p := NewPathHelper(c)
-	err := p.globPathFiles()
+	files, err := p.globPathFiles(c.PathBaseDir)
 	t.Logf("Error: '%#v", err)
 	assert.NoError(t, err)
-	t.Logf("Files: '%#v'", p.files)
-	assert.True(t, len(p.files) >= expectedLen)
+	t.Logf("Files: '%#v'", files)
+	assert.True(t, len(files) >= expectedLen)
 
-	err = p.gatherPathDirs()
+	directories, err := p.inspectPathDirectories(files)
 	t.Logf("Error: '%#v", err)
 	assert.NoError(t, err)
-	t.Logf("Directories: '%#v'", p.directories)
-	assert.True(t, len(p.directories) >= expectedLen)
+	t.Logf("Directories: '%#v'", directories)
+	assert.True(t, len(directories) >= expectedLen)
 
-	assert.Equal(t, expectedPaths, p.pathDirsColonJoined())
+	assert.Equal(t, expectedPaths, p.colonJoin(directories))
 }
 
 // assertExpression assert primary objective of this app, the shell expression to export PATH. Method
@@ -95,5 +96,7 @@ func assertExpression(t *testing.T, c *Config, expectedExpression string) {
 	assert.NoError(t, err)
 	t.Logf("Expression: '%s'", s)
 	assert.NotEmpty(t, s)
-	assert.Equal(t, fmt.Sprintf("export PATH=\"%s\"", expectedExpression), s)
+	expr := fmt.Sprintf(`PATH="%s" ; MANPATH="%s" ; export PATH MANPATH ;`,
+		expectedExpression, expectedExpression)
+	assert.Equal(t, expr, s)
 }
