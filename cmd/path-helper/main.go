@@ -41,7 +41,8 @@ Command-Line Options:
 		flag.PrintDefaults()
 	}
 
-	flag.StringVar(&config.BaseDir, "b", "/etc/paths.d", "Base directory")
+	flag.StringVar(&config.PathBaseDir, "p", "/etc/paths.d", "Paths directory")
+	flag.StringVar(&config.ManBaseDir, "m", "/etc/manpaths.d", "Man pages directory")
 	flag.BoolVar(&config.SkipNotFound, "d", true, "Skip not found directories")
 	flag.BoolVar(&config.SkipDuplicates, "s", true, "Skip duplicated entries")
 	flag.BoolVar(&config.Verbose, "v", false, "Verbose")
