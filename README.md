@@ -15,7 +15,19 @@
 
 # `path-helper`
 
-Command-line application to generate `$PATH` based in a `paths.d` (`/etc/paths.d`) directory.
+Command-line application to generate `PATH` and `MANPATH` environment variables based in a
+configuration directory, the same approach used in Mac OS. By default, `PATH` is genarated based in
+`/etc/paths.d`, while `MANPATH` is based on `/etc/manpaths.d`.
+
+Inside those base directories the order of the files is kept, and each line in a file corresponds to
+a directory in the file-system that should become part of `PATH` or `MANPATH`. Please consider the
+local example of [`paths.d`](./test/paths.d).
+
+In short, the usage of `path-helper` is:
+
+```bash
+eval `path-helper`
+```
 
 ## Install
 
@@ -28,10 +40,12 @@ go get -u github.com/otaviof/path-helper/cmd/path-helper
 Alternatively, you can:
 
 ```bash
-make instal
+make install
 ```
 
 ## Usage Examples
+
+Please consider `--help` to see all possible options:
 
 ```bash
 path-helper --help
@@ -51,6 +65,18 @@ path-helper -d
 
 ### Shell Configuration Example
 
+Evaluate `path-helper` output in order to export `PATH` and `MANPATH` environment variables. The
+following example checks if `path-helper` is present in default location, and later runs `eval`
+against:
+
 ```bash
-[ -x $GOPATH/bin/path-helper ] && eval `path-helper`
+[ -x ${GOPATH}/bin/path-helper ] && \
+    eval `${GOPATH}/bin/path-helper`
+```
+
+Running `path-helper` without `eval`, would return:
+
+```
+$ path-helper
+PATH="..." ; MANPATH="..." ; export PATH MANPATH ;
 ```
