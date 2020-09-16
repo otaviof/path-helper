@@ -1,9 +1,6 @@
 ---
 project_name: path-helper
-dist: ./build/dist
-
-archive:
-  format: tar.gz
+dist: ./_output/dist
 
 builds:
   - id: linux

@@ -1,31 +1,32 @@
-# application name
 APP = path-helper
-# application version
+OUTPUT_DIR ?= _output
 VERSION ?= $(shell cat ./version)
-# build directory
-BUILD_DIR ?= build
-# end-to-end directory
-E2E_DIR ?= test/e2e
-# build flags
-BUILD_FLAGS ?= -v -a -ldflags=-s -mod=vendor
-# gopath copy from environment
+
+BIN ?= $(OUTPUT_DIR)/$(APP)
+CMD ?= cmd/$(APP)/*
+PKG ?= pkg/$(APP)/*
+
 GOPATH ?= ${GOPATH}
 
-.PHONY: default bootstrap build clean test
+E2E_DIR ?= test/e2e
+GO_FLAGS ?= -v -a -ldflags=-s -mod=vendor
+
+.PHONY: vendor build clean test
 
 default: build
 
-bootstrap:
-	GO111MODULE=on go mod vendor
+vendor:
+	go mod vendor
 
-build: clean
-	GO111MODULE=on CGO_ENABLED=0 go build $(BUILD_FLAGS) -o $(BUILD_DIR)/$(APP) cmd/$(APP)/*
+$(BIN):
+	go build $(GO_FLAGS) -o $(BIN) cmd/$(APP)/*
+build: $(BIN)
 
 install: build
-	GO111MODULE=on CGO_ENABLED=0 go install $(BUILD_FLAGS) cmd/$(APP)/*
+	install -m 0755 $(BIN) $(GOPATH)/bin/
 
 clean:
-	rm -rf $(BUILD_DIR) > /dev/null
+	rm -rf $(OUTPUT_DIR) > /dev/null
 
 clean-vendor:
 	rm -rf ./vendor > /dev/null
