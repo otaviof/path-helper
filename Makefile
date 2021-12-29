@@ -11,31 +11,36 @@ GOPATH ?= ${GOPATH}
 E2E_DIR ?= test/e2e
 GO_FLAGS ?= -v -a -ldflags=-s -mod=vendor
 
-.PHONY: vendor build clean test
+ARGS ?=
 
 default: build
 
+.PHONY: vendor
 vendor:
 	go mod vendor
 
 $(BIN):
-	go build $(GO_FLAGS) -o $(BIN) cmd/$(APP)/*
+	go build $(GO_FLAGS) -o $(BIN) $(CMD)
 build: $(BIN)
+
+.PHONY: run
+run:
+	go run $(GO_FLAGS) $(CMD) $(ARGS)
 
 install: build
 	install -m 0755 $(BIN) $(GOPATH)/bin/
 
+.PHONY: clean
 clean:
 	rm -rf $(OUTPUT_DIR) > /dev/null
 
-clean-vendor:
-	rm -rf ./vendor > /dev/null
-
 test: test-unit test-e2e
 
+.PHONY: test-unit
 test-unit:
 	go test -failfast -race -coverprofile=coverage.txt -covermode=atomic -cover -v pkg/$(APP)/*
 
+.PHONY: test-e2e
 test-e2e:
 	bats --recursive $(E2E_DIR)
 
