@@ -31,13 +31,13 @@ eval `path-helper`
 
 ## Install
 
-To install `path-helper` you can simply `go get`, for instance:
+To install `path-helper` you can simply `go install`, as per:
 
 ```bash
-go get -u github.com/otaviof/path-helper/cmd/path-helper
+go install github.com/otaviof/path-helper/cmd/path-helper@latest
 ```
 
-Alternatively, you can:
+Alternatively, you can run the following target in the project folder:
 
 ```bash
 make install
