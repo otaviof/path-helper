@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
 BASE_DIR="./test/paths.d"
-PATH_HELPER="./build/path-helper -p $BASE_DIR -m $BASE_DIR"
+PATH_HELPER="./_output/path-helper -p $BASE_DIR -m $BASE_DIR"
 
 PATHS="/a/a/a:/b/b/b:/c/c/c:/d/d/d"
 PATHS_DUP="/a/a/a:/b/b/b:/c/c/c:/d/d/d:/d/d/d"

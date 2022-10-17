@@ -6,26 +6,24 @@ BIN ?= $(OUTPUT_DIR)/$(APP)
 CMD ?= cmd/$(APP)/*
 PKG ?= pkg/$(APP)/*
 
-GOPATH ?= ${GOPATH}
-
 E2E_DIR ?= test/e2e
-GO_FLAGS ?= -v -a -ldflags=-s -mod=vendor
+GOFLAGS_TEST ?= -failfast -race -coverprofile=coverage.txt -covermode=atomic -cover -v
+GOFLAGS ?= -v -a -ldflags=-s -mod=vendor
 
 ARGS ?=
 
+.EXPORT_ALL_VARIABLES:
+
 default: build
 
-.PHONY: vendor
-vendor:
-	go mod vendor
-
+.PHONY: $(BIN)
 $(BIN):
-	go build $(GO_FLAGS) -o $(BIN) $(CMD)
+	go build -o $(BIN) $(CMD)
 build: $(BIN)
 
 .PHONY: run
 run:
-	go run $(GO_FLAGS) $(CMD) $(ARGS)
+	go run $(CMD) $(ARGS)
 
 install: build
 	install -m 0755 $(BIN) $(GOPATH)/bin/
@@ -38,14 +36,11 @@ test: test-unit test-e2e
 
 .PHONY: test-unit
 test-unit:
-	go test -failfast -race -coverprofile=coverage.txt -covermode=atomic -cover -v pkg/$(APP)/*
+	go test $(GOFLAGS_TEST) pkg/$(APP)/*
 
 .PHONY: test-e2e
 test-e2e:
-	bats --recursive $(E2E_DIR)
-
-hack-install-bats:
-	hack/install-bats.sh
+	./test/e2e/bats/core/bin/bats --recursive $(E2E_DIR)/*.bats
 
 codecov:
 	mkdir .ci || true
