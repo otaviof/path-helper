@@ -3,4 +3,3 @@
 .vscode
 _output/
 coverage*
-vendor
