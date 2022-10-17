@@ -1,15 +1,12 @@
 <p align="center">
-    <a alt="GoReport" href="https://goreportcard.com/report/github.com/otaviof/path-helper">
-        <img alt="GoReport" src="https://goreportcard.com/badge/github.com/otaviof/path-helper">
+    <a alt="GitHub Actions CI" href="https://github.com/otaviof/path-helper/actions">
+        <img src="https://github.com/otaviof/path-helper/actions/workflows/test.yaml/badge.svg">
     </a>
-    <a alt="Code Coverage" href="https://codecov.io/gh/otaviof/path-helper">
-        <img alt="Code Coverage" src="https://codecov.io/gh/otaviof/path-helper/branch/master/graph/badge.svg">
+    <a alt="go.pkg.dev project documentation" href="https://pkg.go.dev/mod/github.com/otaviof/path-helper">
+        <img src="https://img.shields.io/badge/go.pkg.dev-docs-007d9c?logo=go&logoColor=white">
     </a>
-    <a href="https://godoc.org/github.com/otaviof/path-helper/pkg/path-helper">
-        <img alt="GoDoc Reference" src="https://godoc.org/github.com/otaviof/path-helper/pkg/path-helper?status.svg">
-    </a>
-    <a alt="CI Status" href="https://travis-ci.com/otaviof/path-helper">
-        <img alt="CI Status" src="https://travis-ci.com/otaviof/path-helper.svg?branch=master">
+    <a alt="goreportcard.com project report" href="https://goreportcard.com/report/github.com/otaviof/path-helper">
+        <img src="https://goreportcard.com/badge/github.com/otaviof/path-helper">
     </a>
 </p>
 
