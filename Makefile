@@ -54,10 +54,10 @@ codecov:
 	bash .ci/codecov.sh -t $(CODECOV_TOKEN)
 
 snapshot:
-	goreleaser --rm-dist --snapshot
+	goreleaser --clean --snapshot
 
 snapshot-local:
-	goreleaser --rm-dist --snapshot --skip-publish --debug
+	goreleaser --clean --snapshot --skip-publish --debug
 
 snapshot-install: snapshot-local
 	install -m 755 build/dist/darwin_darwin_amd64/$(APP) "$(GOPATH)/bin/$(APP)"
@@ -65,4 +65,4 @@ snapshot-install: snapshot-local
 release:
 	git tag $(VERSION)
 	git push --tags origin $(VERSION)
-	goreleaser --rm-dist
+	goreleaser --clean
