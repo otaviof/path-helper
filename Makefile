@@ -1,14 +1,20 @@
 APP = path-helper
-OUTPUT_DIR ?= _output
+OUTPUT_DIR ?= bin
 VERSION ?= $(shell cat ./version)
 
 BIN ?= $(OUTPUT_DIR)/$(APP)
-CMD ?= cmd/$(APP)/*
-PKG ?= pkg/$(APP)/*
+CMD ?= ./cmd/$(APP)/...
+PKG ?= ./pkg/$(APP)/...
 
-E2E_DIR ?= test/e2e
+GOFLAGS ?= -v -a
+CGO_LDFLAGS ?= -s -w
+
 GOFLAGS_TEST ?= -failfast -race -coverprofile=coverage.txt -covermode=atomic -cover -v
-GOFLAGS ?= -v -a -ldflags=-s -mod=vendor
+
+BATS_CORE ?= test/e2e/bats/core/bin/bats
+E2E_DIR ?= test/e2e
+E2E_TEST_GLOB ?= *.bats
+E2E_TESTS = $(E2E_DIR)/$(E2E_TEST_GLOB)
 
 ARGS ?=
 
@@ -16,9 +22,9 @@ ARGS ?=
 
 default: build
 
-.PHONY: $(BIN)
 $(BIN):
 	go build -o $(BIN) $(CMD)
+
 build: $(BIN)
 
 .PHONY: run
@@ -30,17 +36,17 @@ install: build
 
 .PHONY: clean
 clean:
-	rm -rf $(OUTPUT_DIR) > /dev/null
+	rm -rf $(OUTPUT_DIR) >/dev/null
 
 test: test-unit test-e2e
 
 .PHONY: test-unit
 test-unit:
-	go test $(GOFLAGS_TEST) pkg/$(APP)/*
+	go test $(GOFLAGS_TEST) $(CMD) $(PKG)
 
 .PHONY: test-e2e
-test-e2e:
-	./test/e2e/bats/core/bin/bats --recursive $(E2E_DIR)/*.bats
+test-e2e: $(BIN)
+	$(BATS_CORE) --trace --verbose-run --recursive $(E2E_TESTS)
 
 codecov:
 	mkdir .ci || true

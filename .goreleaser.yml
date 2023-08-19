@@ -1,6 +1,6 @@
 ---
 project_name: path-helper
-dist: ./_output/dist
+dist: ./bin/dist
 
 builds:
   - id: linux
@@ -9,23 +9,24 @@ builds:
     goos:
       - linux
     env:
-      - CGO_ENABLED=0
-      - GO111MODULE=on
+      - GOFLAGS="-v -a"
+      - CGO_LDFLAGS="-s -w"
     flags:
       - -a
-      - -mod=vendor
+      - -v
     goarch:
       - amd64
+
   - id: darwin
     binary: path-helper
     main: cmd/path-helper/main.go
     goos:
       - darwin
     env:
-      - CGO_ENABLED=0
-      - GO111MODULE=on
+      - GOFLAGS="-v -a"
+      - CGO_LDFLAGS="-s -w"
     flags:
       - -a
-      - -mod=vendor
+      - -v
     goarch:
       - amd64

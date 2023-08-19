@@ -1,5 +1,5 @@
 .ci
 .env
 .vscode
-_output/
+bin/
 coverage*
