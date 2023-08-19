@@ -3,23 +3,11 @@ project_name: path-helper
 dist: ./bin/dist
 
 builds:
-  - id: linux
+  - id: path-helper
     binary: path-helper
     main: cmd/path-helper/main.go
     goos:
       - linux
-    env:
-      - CGO_LDFLAGS="-s -w"
-    flags:
-      - -a
-      - -v
-    goarch:
-      - amd64
-
-  - id: darwin
-    binary: path-helper
-    main: cmd/path-helper/main.go
-    goos:
       - darwin
     env:
       - CGO_LDFLAGS="-s -w"
@@ -28,3 +16,4 @@ builds:
       - -v
     goarch:
       - amd64
+      - arm64
