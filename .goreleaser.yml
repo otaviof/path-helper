@@ -9,7 +9,6 @@ builds:
     goos:
       - linux
     env:
-      - GOFLAGS="-v -a"
       - CGO_LDFLAGS="-s -w"
     flags:
       - -a
@@ -23,7 +22,6 @@ builds:
     goos:
       - darwin
     env:
-      - GOFLAGS="-v -a"
       - CGO_LDFLAGS="-s -w"
     flags:
       - -a
