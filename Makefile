@@ -16,6 +16,8 @@ E2E_DIR ?= test/e2e
 E2E_TEST_GLOB ?= *.bats
 E2E_TESTS = $(E2E_DIR)/$(E2E_TEST_GLOB)
 
+INSTALL_DIR ?= /usr/local/bin
+
 ARGS ?=
 
 .EXPORT_ALL_VARIABLES:
@@ -32,7 +34,7 @@ run:
 	go run $(CMD) $(ARGS)
 
 install: build
-	install -m 0755 $(BIN) $(GOPATH)/bin/
+	install -m 0755 $(BIN) $(INSTALL_DIR)/$(APP)
 
 .PHONY: clean
 clean:

@@ -34,10 +34,10 @@ To install `path-helper` you can simply `go install`, as per:
 go install github.com/otaviof/path-helper/cmd/path-helper@latest
 ```
 
-Alternatively, you can run the following target in the project folder:
+Alternatively, you can run the following target in the project folder, `sudo` might be required for completion.
 
 ```bash
-make install
+make install INSTALL_DIR="/usr/local/bin"
 ```
 
 ## Usage Examples
