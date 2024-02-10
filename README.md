@@ -12,13 +12,15 @@
 
 # `path-helper`
 
-Command-line application to generate `PATH` and `MANPATH` environment variables based in a
-configuration directory, the same approach used in Mac OS. By default, `PATH` is genarated based in
-`/etc/paths.d`, while `MANPATH` is based on `/etc/manpaths.d`.
+Command-line application to generate `PATH` and `MANPATH` environment variables based on a configuration directory, the same approach used in MacOS.
 
-Inside those base directories the order of the files is kept, and each line in a file corresponds to
-a directory in the file-system that should become part of `PATH` or `MANPATH`. Please consider the
-local example of [`paths.d`](./test/paths.d).
+By default, `PATH` is genarated based in `/etc/paths.d` directory, while `MANPATH` is based on `/etc/manpaths.d`, you can configure these locations.
+
+Files created on these directories are listed alphabetically, each line in a file corresponds to a another directory that should become part of `PATH` and `MANPATH`.
+
+Configuration files may as well contain environment variables which will be expanded during execution.
+
+Please consider the local example of [`paths.d`](./test/paths.d).
 
 In short, the usage of `path-helper` is:
 
@@ -28,16 +30,24 @@ eval `path-helper`
 
 ## Install
 
-To install `path-helper` you can simply `go install`, as per:
+The most convenient way would be:
 
-```bash
-go install github.com/otaviof/path-helper/cmd/path-helper@latest
+```sh
+curl -sL https://raw.githubusercontent.com/otaviof/path-helper/main/hack/install-lastest-release.sh | sh
 ```
 
-Alternatively, you can run the following target in the project folder, `sudo` might be required for completion.
+This process is [automated by this script](./hack/install-lastest-release.sh), you should consider running on your repository clone, i.e.:
 
-```bash
-make install INSTALL_DIR="/usr/local/bin"
+```sh
+hack/install-lastest-release.sh
+```
+
+To install `path-helper` consider the [release page][releaseURL] and download pre-compiled binaries for your platform. Once the tarball is downloaded, you need to extract and install on the desired location, like the example snippet below
+
+```sh
+cd /tmp
+tar -zxvpf path-helper-ostype-arch.tar.gz path-helper
+install -m 0755 path-helper /usr/local/bin/path-helper
 ```
 
 ## Usage Examples
@@ -62,18 +72,18 @@ path-helper -d
 
 ### Shell Configuration Example
 
-Evaluate `path-helper` output in order to export `PATH` and `MANPATH` environment variables. The
-following example checks if `path-helper` is present in default location, and later runs `eval`
-against:
+Evaluate `path-helper` output in order to export `PATH` and `MANPATH` environment variables. The following example checks if `path-helper` is present in default location, and later runs `eval` against:
 
 ```bash
-[ -x ${GOPATH}/bin/path-helper ] && \
+[[ -x ${GOPATH}/bin/path-helper ]] &&
     eval `${GOPATH}/bin/path-helper`
 ```
 
-Running `path-helper` without `eval`, would return:
+Running `path-helper` without `eval`, would print out the Shell script snippet it generateds. For instance:
 
 ```
 $ path-helper
 PATH="..." ; MANPATH="..." ; export PATH MANPATH ;
 ```
+
+[releaseURL]: https://github.com/otaviof/path-helper/releases/tag/0.1.1

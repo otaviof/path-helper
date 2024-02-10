@@ -15,46 +15,44 @@ func fatal(err error) {
 }
 
 // commandLineParser handle command line flags, display help message.
-func commandLineParser(config *pathhelper.Config) {
+func commandLineParser() *pathhelper.Config {
 	flag.Usage = func() {
 		fmt.Printf(`## path-helper
 
-Helper command-line application to compose "PATH" expression based in a "paths.d"
-directory, respecting order of files and adding toggles to skip entries.
+Helper command-line application to compose "PATH" and "MANPATH" based in a
+"paths.d" directory, respecting order of its files and toggles to skip entries.
 
-To export new "PATH" to your shell instance, run "eval" against "path-helper"
-output. Examples below.
+Environment variables may be used inside the path-files, and these will be
+expanded before rendering the final "PATH" and "MANPATH".
 
-Usage:
+To export new "PATH" and "MANPATH" to your shell current instance, run "eval"
+against "path-helper" output.
+
+# Usage:
   $ path-helper [-h|--help|flags]
 
-Examples:
+# Examples:
   $ path-helper -v
   $ path-helper -v -s=false -d=false
 
-Shell-Export:
+# Shell-Export:
   $ eval "$(path-helper -s=false -d=false)"
-  $ echo $PATH
+  $ echo ${PATH}
+  $ echo ${MANPATH}
 
-Command-Line Options:
+# Command-Line Options:
 `)
 		flag.PrintDefaults()
 	}
 
-	flag.StringVar(&config.PathBaseDir, "p", "/etc/paths.d", "Paths directory")
-	flag.StringVar(&config.ManBaseDir, "m", "/etc/manpaths.d", "Man pages directory")
-	flag.BoolVar(&config.SkipNotFound, "d", true, "Skip not found directories")
-	flag.BoolVar(&config.SkipDuplicates, "s", true, "Skip duplicated entries")
-	flag.BoolVar(&config.Verbose, "v", false, "Verbose")
-
+	cfg := pathhelper.NewConfigFromFlags()
 	flag.Parse()
+	return cfg
 }
 
 func main() {
-	config := &pathhelper.Config{}
-	commandLineParser(config)
-
-	p := pathhelper.NewPathHelper(config)
+	cfg := commandLineParser()
+	p := pathhelper.NewPathHelper(cfg)
 	expr, err := p.RenderExpression()
 	if err != nil {
 		fatal(err)

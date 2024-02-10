@@ -1,5 +1,5 @@
 ---
-name: Unit and E2E Tests
+name: test
 
 on:
   push:

@@ -2,6 +2,7 @@ package pathhelper
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,8 +17,14 @@ func TestPathHelper(t *testing.T) {
 		ManBaseDir:     "../../test/paths.d",
 		PathBaseDir:    "../../test/paths.d",
 	}
-	expectedJoinedPaths := "/a/a/a:/b/b/b:/c/c/c:/d/d/d"
-	expectedJoinedPathsDuplicated := "/a/a/a:/b/b/b:/c/c/c:/d/d/d:/d/d/d"
+	testDirEnv := os.Getenv("PATH_HELPER_TEST_DIR")
+	expectedJoinedPaths := fmt.Sprintf(
+		"/a/a/a:/b/b/b:/c/c/c:/d/d/d:%s/bin", testDirEnv,
+	)
+	expectedJoinedPathsDuplicated := fmt.Sprintf(
+		"/a/a/a:/b/b/b:/c/c/c:/d/d/d:/d/d/d:%s/bin",
+		testDirEnv,
+	)
 
 	t.Run("without-duplicates-and-without-not-founds", func(t *testing.T) {
 		t.Run("inspecting-directories-and-files", func(t *testing.T) {

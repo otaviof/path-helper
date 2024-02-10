@@ -2,6 +2,7 @@ package pathhelper
 
 import (
 	"fmt"
+	"os"
 	"path"
 	"path/filepath"
 	"strings"
@@ -49,8 +50,9 @@ func (p *PathHelper) globPathFiles(baseDir string) ([]string, error) {
 	return files, nil
 }
 
-// inspectPathDirectories based in path files, read and inspect direcotories listed in those. Can
-// return errors related to reading files.
+// inspectPathDirectories based in path files, read and inspect direcotories
+// listed, and it also expands environment variables. Can return errors related to
+// reading files.
 func (p *PathHelper) inspectPathDirectories(files []string) ([]string, error) {
 	directories := []string{}
 	for _, file := range files {
@@ -61,12 +63,14 @@ func (p *PathHelper) inspectPathDirectories(files []string) ([]string, error) {
 		}
 
 		for _, directory := range lines {
-			p.logger("\t- '%s'", directory)
 			if strings.HasPrefix(directory, "#") {
 				continue
 			}
+			directory = os.ExpandEnv(directory)
+			p.logger("\t- '%s'", directory)
 			if p.config.SkipNotFound && !dirExists(directory) {
-				p.logger("[WARN] Directory '%s' (%s) is not found! Skipping.", directory, file)
+				p.logger("[WARN] Directory '%s' (%s) is not found! Skipping.",
+					directory, file)
 				continue
 			}
 			directories = p.append(directories, directory)

@@ -9,13 +9,24 @@ PKG ?= ./pkg/$(APP)/...
 GOFLAGS ?= -v -a
 CGO_LDFLAGS ?= -s -w
 
-GOFLAGS_TEST ?= -failfast -race -coverprofile=coverage.txt -covermode=atomic -cover -v
+GOFLAGS_TEST ?= \
+	-v  \
+	-failfast \
+	-race \
+	-cover \
+	-coverprofile=coverage.txt \
+	-covermode=atomic
 
 BATS_CORE ?= test/e2e/bats/core/bin/bats
 E2E_DIR ?= test/e2e
 E2E_TEST_GLOB ?= *.bats
 E2E_TESTS = $(E2E_DIR)/$(E2E_TEST_GLOB)
 
+# Expanded during path files evaluation, to assert environment variables support.
+PATH_HELPER_TEST_DIR = "/test"
+
+LOWER_OSTYPE ?= $(shell uname -s |tr '[:upper:]' '[:lower:]')
+CPUTYPE ?= $(shell uname -m)
 INSTALL_DIR ?= /usr/local/bin
 
 ARGS ?=
@@ -24,6 +35,7 @@ ARGS ?=
 
 default: build
 
+.PHONY: $(BIN)
 $(BIN):
 	go build -o $(BIN) $(CMD)
 
@@ -62,7 +74,9 @@ snapshot-local:
 	goreleaser --clean --snapshot --skip-publish --debug
 
 snapshot-install: snapshot-local
-	install -m 755 build/dist/darwin_darwin_amd64/$(APP) "$(GOPATH)/bin/$(APP)"
+	install -m 755 \
+		${OUTPUT_DIR}/dist/$(APP)_$(LOWER_OSTYPE)_$(CPUTYPE)/$(APP) \
+		$(INSTALL_DIR)/$(APP)
 
 release:
 	git tag $(VERSION)
