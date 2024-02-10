@@ -25,7 +25,8 @@ declare -r BASE_DOMAIN_PATH="github.com/repos/${REPO_OWNER}/${REPO_NAME}"
 
 # Get the operating system and CPU type.
 declare -r LOWER_OSTYPE=$(uname -s | tr '[:upper:]' '[:lower:]')
-declare -r CPUTYPE=$(uname -m)
+declare -r MACHINE_TYPE="$(uname -m)"
+declare -r CPUTYPE="${MACHINE_TYPE/x86_64/amd64}"
 
 # Search for the specific relase artifact URL, using the operating system and CPU
 # type. Returns the full URL to the artifact, or empty if not found.
