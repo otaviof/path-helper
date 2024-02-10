@@ -74,9 +74,11 @@ path-helper -d
 
 Evaluate `path-helper` output in order to export `PATH` and `MANPATH` environment variables. The following example checks if `path-helper` is present in default location, and later runs `eval` against:
 
-```bash
-[[ -x ${GOPATH}/bin/path-helper ]] &&
-    eval `${GOPATH}/bin/path-helper`
+```sh
+declare -r PATH_HELPER_BIN="/usr/local/bin/path-helper"
+
+[[ -x "${PATH_HELPER_BIN}" ]] &&
+    eval "$(${PATH_HELPER_BIN})"
 ```
 
 Running `path-helper` without `eval`, would print out the Shell script snippet it generateds. For instance:
