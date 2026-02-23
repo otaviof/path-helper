@@ -1,9 +1,8 @@
 package pathhelper
 
 import (
-	"bufio"
-	"io"
 	"os"
+	"strings"
 )
 
 // dirExists check if a directory exists.
@@ -12,25 +11,15 @@ func dirExists(dirPath string) bool {
 	return !os.IsNotExist(err)
 }
 
-// readLines read lines from file. Return error in case of having issues to read given file.
+// readLines read lines from file. Return error in case of having issues to read
+// given file.
 func readLines(filePath string) ([]string, error) {
-	f, err := os.Open(filePath)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
-		return []string{}, err
+		return nil, err
 	}
-	defer f.Close()
-
-	var lines []string
-	reader := bufio.NewReader(f)
-	for {
-		line, _, err := reader.ReadLine()
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return []string{}, err
-		}
-		lines = append(lines, string(line))
+	if len(data) == 0 {
+		return nil, nil
 	}
-	return lines, nil
+	return strings.Split(strings.TrimRight(string(data), "\n"), "\n"), nil
 }

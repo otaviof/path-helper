@@ -10,10 +10,11 @@ builds:
       - linux
       - darwin
     env:
-      - CGO_LDFLAGS="-s -w"
+      - CGO_ENABLED=0
     flags:
-      - -a
-      - -v
+      - -trimpath
+    ldflags:
+      - -s -w
     goarch:
       - amd64
       - arm64

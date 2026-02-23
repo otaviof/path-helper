@@ -10,7 +10,7 @@ import (
 
 // fatal print out error as a shell comment and exit on error.
 func fatal(err error) {
-	fmt.Fprintf(os.Stderr, fmt.Sprintf("# [ERROR] %v\n", err))
+	fmt.Fprintf(os.Stderr, "# [ERROR] %v\n", err)
 	os.Exit(1)
 }
 
@@ -57,5 +57,6 @@ func main() {
 	if err != nil {
 		fatal(err)
 	}
-	fmt.Println(expr)
+	os.Stdout.WriteString(expr)
+	os.Stdout.WriteString("\n")
 }

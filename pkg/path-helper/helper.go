@@ -3,63 +3,67 @@ package pathhelper
 import (
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 )
 
-// PathHelper represents the application path-helper. Takes a configuration as input, and uses local
-// attributes to keep list of files and directories to compose PATH.
+// PathHelper represents the application path-helper. Takes a configuration as
+// input, and uses local attributes to keep list of files and directories to
+// compose PATH.
 type PathHelper struct {
-	config *Config // parsed command-line flags
+	config *Config             // parsed command-line flags
+	seen   map[string]struct{} // tracks duplicates for O(1) lookups
 }
 
 // logger for path-helper instance, skip printing when verbose is off.
-func (p *PathHelper) logger(format string, v ...interface{}) {
+func (p *PathHelper) logger(format string, v ...any) {
 	if p.config.Verbose {
-		fmt.Printf(fmt.Sprintf("# %s\n", format), v...)
+		fmt.Fprintf(os.Stderr, "# "+format+"\n", v...)
 	}
 }
 
-// append a directory in global list, making sure it skips duplicates when setting is enabled.
+// append a directory in global list, making sure it skips duplicates when setting
+// is enabled.
 func (p *PathHelper) append(directories []string, directory string) []string {
 	if p.config.SkipDuplicates {
-		for _, d := range directories {
-			if d == directory {
-				p.logger("[WARN] Skipping entry '%s', is already defined.", directory)
-				return directories
-			}
+		if _, exists := p.seen[directory]; exists {
+			p.logger("[WARN] Skipping entry '%s', is already defined.", directory)
+			return directories
 		}
+		p.seen[directory] = struct{}{}
 	}
 	return append(directories, directory)
 }
 
-// globPathFiles load list of files in base directory. Returns errors when base directory does not
-// exist or when having issues to execute globing.
+// globPathFiles load list of files in base directory. Returns errors when base
+// directory does not exist or when having issues to read the directory.
 func (p *PathHelper) globPathFiles(baseDir string) ([]string, error) {
 	p.logger("Inspecting paths directory: '%s'", baseDir)
-	if !dirExists(baseDir) {
-		return nil, fmt.Errorf("can't find base directory at '%s'", baseDir)
-	}
 
-	pattern := path.Join(baseDir, "*")
-	files, err := filepath.Glob(pattern)
+	entries, err := os.ReadDir(baseDir)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("can't find base directory at '%s': %w", baseDir, err)
+	}
+	files := make([]string, 0, len(entries))
+	for _, e := range entries {
+		if !e.IsDir() {
+			files = append(files, filepath.Join(baseDir, e.Name()))
+		}
 	}
 	return files, nil
 }
 
-// inspectPathDirectories based in path files, read and inspect direcotories
+// inspectPathDirectories based in path files, read and inspect directories
 // listed, and it also expands environment variables. Can return errors related to
 // reading files.
 func (p *PathHelper) inspectPathDirectories(files []string) ([]string, error) {
-	directories := []string{}
+	clear(p.seen)
+	directories := make([]string, 0, len(files)*4)
 	for _, file := range files {
 		p.logger("File '%s'", file)
 		lines, err := readLines(file)
 		if err != nil {
-			return nil, fmt.Errorf("can't read file '%s': '%v'", file, err)
+			return nil, fmt.Errorf("can't read file '%s': %w", file, err)
 		}
 
 		for _, directory := range lines {
@@ -79,9 +83,10 @@ func (p *PathHelper) inspectPathDirectories(files []string) ([]string, error) {
 	return directories, nil
 }
 
-// collect glob for files and open them to extract contents. File contents are threated as path
-// directories, therefore configuration directive applies on them. It can return error when having
-// problems to glob directories and on reading files.
+// collect glob for files and open them to extract contents. File contents are
+// treated as path directories, therefore configuration directive applies on them.
+// It can return error when having problems to glob directories and on reading
+// files.
 func (p *PathHelper) collect(baseDir string) ([]string, error) {
 	files, err := p.globPathFiles(baseDir)
 	if err != nil {
@@ -94,13 +99,14 @@ func (p *PathHelper) collect(baseDir string) ([]string, error) {
 	return directories, nil
 }
 
-// pathDirsColonJoined return slice of direcotires joined by colon.
+// colonJoin return slice of directories joined by colon.
 func (p *PathHelper) colonJoin(directories []string) string {
 	return strings.Join(directories, ":")
 }
 
-// RenderExpression print out the shell expression exporting PATH. Will forward errors from methods
-// listing and reading path files, and inspecting direcotories present found in those files.
+// RenderExpression print out the shell expression exporting PATH. Will forward
+// errors from methods listing and reading path files, and inspecting directories
+// present found in those files.
 func (p *PathHelper) RenderExpression() (string, error) {
 	pathDirectories, err := p.collect(p.config.PathBaseDir)
 	if err != nil {
@@ -112,12 +118,20 @@ func (p *PathHelper) RenderExpression() (string, error) {
 		return "", err
 	}
 
-	expr := fmt.Sprintf(`PATH="%s" ; MANPATH="%s" ; export PATH MANPATH ;`,
-		p.colonJoin(pathDirectories), p.colonJoin(manDirectories))
-	return expr, nil
+	var b strings.Builder
+	b.Grow(128)
+	b.WriteString(`PATH="`)
+	b.WriteString(p.colonJoin(pathDirectories))
+	b.WriteString(`" ; MANPATH="`)
+	b.WriteString(p.colonJoin(manDirectories))
+	b.WriteString(`" ; export PATH MANPATH ;`)
+	return b.String(), nil
 }
 
 // NewPathHelper instantiate a PathHelper type.
 func NewPathHelper(config *Config) *PathHelper {
-	return &PathHelper{config: config}
+	return &PathHelper{
+		config: config,
+		seen:   make(map[string]struct{}, 32),
+	}
 }

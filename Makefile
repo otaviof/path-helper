@@ -6,8 +6,8 @@ BIN ?= $(OUTPUT_DIR)/$(APP)
 CMD ?= ./cmd/$(APP)/...
 PKG ?= ./pkg/$(APP)/...
 
-GOFLAGS ?= -v -a
-CGO_LDFLAGS ?= -s -w
+GOFLAGS ?= -trimpath
+LDFLAGS ?= -s -w
 
 GOFLAGS_TEST ?= \
 	-v  \
@@ -37,7 +37,7 @@ default: build
 
 .PHONY: $(BIN)
 $(BIN):
-	go build -o $(BIN) $(CMD)
+	CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" $(GOFLAGS) -o $(BIN) $(CMD)
 
 build: $(BIN)
 
@@ -51,6 +51,10 @@ install: build
 .PHONY: clean
 clean:
 	rm -rf $(OUTPUT_DIR) >/dev/null
+
+.PHONY: lint
+lint:
+	golangci-lint run ./...
 
 test: test-unit test-e2e
 

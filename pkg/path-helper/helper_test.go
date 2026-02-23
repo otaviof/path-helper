@@ -8,7 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestPathHelper run through common use-cases setting different options and asserting.
+// TestPathHelper run through common use-cases setting different options and
+// asserting.
 func TestPathHelper(t *testing.T) {
 	c := &Config{
 		SkipDuplicates: true,
@@ -76,9 +77,16 @@ func TestPathHelper(t *testing.T) {
 	})
 }
 
-// assertFilesAndDirectories run assertion of "files" and "directories" attributes. Method parameters
-// share the test context and expected characteristics.
-func assertFilesAndDirectories(t *testing.T, c *Config, expectedLen int, expectedPaths string) {
+// assertFilesAndDirectories run assertion of "files" and "directories"
+// attributes. Method parameters share the test context and expected
+// characteristics.
+func assertFilesAndDirectories(
+	t *testing.T,
+	c *Config,
+	expectedLen int,
+	expectedPaths string,
+) {
+	t.Helper()
 	p := NewPathHelper(c)
 	files, err := p.globPathFiles(c.PathBaseDir)
 	t.Logf("Error: '%#v", err)
@@ -95,9 +103,11 @@ func assertFilesAndDirectories(t *testing.T, c *Config, expectedLen int, expecte
 	assert.Equal(t, expectedPaths, p.colonJoin(directories))
 }
 
-// assertExpression assert primary objective of this app, the shell expression to export PATH. Method
-// parameters share test context, configuration and expected export expression.
+// assertExpression assert primary objective of this app, the shell expression to
+// export PATH. Method parameters share test context, configuration and expected
+// export expression.
 func assertExpression(t *testing.T, c *Config, expectedExpression string) {
+	t.Helper()
 	p := NewPathHelper(c)
 	s, err := p.RenderExpression()
 	assert.NoError(t, err)
